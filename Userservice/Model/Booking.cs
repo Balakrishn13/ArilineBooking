@@ -19,9 +19,15 @@ namespace Userservice.Model
 
         public DateTime JourneyDate { get; set; }
 
-        public List<BookingPerson> bookings { get; set; }
+        //public List<BookingPerson> bookings { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Gender { get; set; }
+        public string Food { get; set; }
+        
 
-        public int UserId { get; set; }
+
+        public string UserId { get; set; }
         public DateTime Createateat { get; set; }
 
         public string TicketBooking(Booking booking, IConfiguration Config)
@@ -49,47 +55,39 @@ namespace Userservice.Model
                 con.Open();
                 cmd.ExecuteNonQuery();
                 Msg = cmd.Parameters["@Id"].Value.ToString();
+
                 if (Msg != "")
                 {
                     con.Close();
                     con.Dispose();
+                    SqlConnection Pcon = new SqlConnection(strConnString);
+                    SqlCommand pcmd = new SqlCommand();
+                    pcmd.CommandType = CommandType.StoredProcedure;
+                    pcmd.CommandText = "[dbo].[spBookingPerson]";
+                    pcmd.Parameters.Add("@Name", SqlDbType.VarChar).Value = booking.Name;
+                    pcmd.Parameters.Add("@age", SqlDbType.VarChar).Value = booking.Age;
+                    pcmd.Parameters.Add("@Gender", SqlDbType.VarChar).Value = booking.Gender;
+                    pcmd.Parameters.Add("@Food", SqlDbType.VarChar).Value = booking.Food;
+                    pcmd.Parameters.Add("@BookingId", SqlDbType.Int).Value = Msg;
 
-
-                   
-                    List<BookingPerson> people = booking.bookings;
-                    int Count = people.Count;
-                    for (int i = 0; i < Count; i++)
+                    pcmd.Parameters.Add("@Id", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    pcmd.Connection = Pcon;
+                    try
+                    {
+                        Pcon.Open();
+                        pcmd.ExecuteNonQuery();
+                        string pMsg = pcmd.Parameters["@Id"].Value.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                    finally
                     {
 
-                        SqlConnection Pcon = new SqlConnection(strConnString);
-                        SqlCommand pcmd = new SqlCommand();
-                        pcmd.CommandType = CommandType.StoredProcedure;
-                        pcmd.CommandText = "[dbo].[spBookingPerson]";
-                        pcmd.Parameters.Add("@Name", SqlDbType.VarChar).Value = people[i].Name;
-                        pcmd.Parameters.Add("@age", SqlDbType.VarChar).Value = people[i].Age;
-                        pcmd.Parameters.Add("@Gender", SqlDbType.VarChar).Value = people[i].Gender;
-                        pcmd.Parameters.Add("@Food", SqlDbType.VarChar).Value = people[i].Food;
-                        pcmd.Parameters.Add("@BookingId", SqlDbType.Int).Value = Msg;
-                      
-                        pcmd.Parameters.Add("@Id", SqlDbType.Int).Direction = ParameterDirection.Output;
-                        pcmd.Connection = Pcon;
-                        try
-                        {
-                            Pcon.Open();
-                            pcmd.ExecuteNonQuery();
-                            string pMsg = pcmd.Parameters["@Id"].Value.ToString();
-                        }
-                        catch (Exception ex)
-                        {
-                            throw ex;
-                        }
-                        finally
-                        {
+                        Pcon.Close();
+                        Pcon.Dispose();
 
-                            Pcon.Close();
-                            Pcon.Dispose();
-                            
-                        }
                     }
                 }
             }
@@ -108,7 +106,10 @@ namespace Userservice.Model
 
             if (Msg != "")
             {
-                return pnr;
+                PNR pNR = new PNR();
+                pNR.PNRNumber = pnr;
+                Msg = JsonConvert.SerializeObject(pNR);
+                return Msg; ;
             }
             else
             {
@@ -120,7 +121,7 @@ namespace Userservice.Model
         {
             Random rnd = new Random(8);
 
-            string PNR = "PNR" + rnd.Next().ToString();
+            string PNR = "PNR" + DateTime.Now.ToString("G");
 
             return PNR;
 
@@ -145,7 +146,36 @@ namespace Userservice.Model
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(mDataSet);
-                Msg = JsonConvert.SerializeObject(mDataSet);
+
+
+                List<PNRData> getAirlines = new List<PNRData>();
+
+                if (mDataSet.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < mDataSet.Tables[0].Rows.Count; i++)
+                    {
+                        PNRData ga = new PNRData();
+                        ga.FlightId = mDataSet.Tables[0].Rows[i]["FlightId"].ToString();
+                        ga.Journyfrom = mDataSet.Tables[0].Rows[i]["Journyfrom"].ToString();
+                        ga.Journeyto = mDataSet.Tables[0].Rows[i]["Journeyto"].ToString();
+                        ga.Journeydate = mDataSet.Tables[0].Rows[i]["Journeydate"].ToString();
+                        ga.PNR = mDataSet.Tables[0].Rows[i]["PNR"].ToString();
+                        ga.Name = mDataSet.Tables[0].Rows[i]["Name"].ToString();
+                        ga.Age = mDataSet.Tables[0].Rows[i]["Age"].ToString();
+                        ga.Gender = mDataSet.Tables[0].Rows[i]["Gender"].ToString();
+                        ga.Food = mDataSet.Tables[0].Rows[i]["Food"].ToString();
+
+                        ga.Status = mDataSet.Tables[0].Rows[i]["Status"].ToString();
+                        getAirlines.Add(ga);
+                    }
+
+                    Msg = JsonConvert.SerializeObject(getAirlines);
+
+                }
+                else
+                {
+                    Msg = "No Data Found";
+                }
 
 
             }
@@ -167,9 +197,9 @@ namespace Userservice.Model
 
         }
 
-        public string PNRDelete(string pnr, IConfiguration Config)
+        public bool PNRDelete(string pnr, IConfiguration Config)
         {
-            string Msg = string.Empty;
+            bool Msg = false;
 
 
             string strConnString = Config.GetConnectionString("Database");
@@ -183,7 +213,7 @@ namespace Userservice.Model
             {
                 con.Open();
                 cmd.ExecuteNonQuery();
-                Msg = pnr;
+                Msg = true;
             }
             catch (Exception ex)
             {

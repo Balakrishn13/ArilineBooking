@@ -36,6 +36,124 @@ namespace AdminService.Controllers
             }
         }
 
+        [Route("/api/v1.0/flight/airline/discount")]
+        [HttpPost]
+        public ActionResult discount(Adddisc adddisc)
+        {
+            Adddisc rep = new Adddisc();
+
+            try
+            {
+                string Msg = rep.Add(adddisc, _configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+        [Route("/api/v1.0/flight/airline/getdiscount")]
+        [HttpGet]
+        public ActionResult getdiscount()
+        {
+            Adddisc rep = new Adddisc();
+
+            try
+            {
+                string Msg = rep.GetDisc(_configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [Route("/api/v1.0/flight/airline/deletediscount/{Id}/{Status}")]
+        [HttpDelete]
+        public ActionResult deletediscount(string Id,string Status)
+        {
+            Adddisc rep = new Adddisc();
+
+            try
+            {
+                bool Msg = rep.Delete(Id, Status, _configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [Route("/api/v1.0/flight/airline/getairline")]
+        [HttpGet]
+        public ActionResult getairline()
+        {
+            Airline rep = new Airline();
+
+            try
+            {
+                string Msg = rep.GetAirline(_configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [Route("/api/v1.0/flight/airline/deleteairline/{Id}/{Status}")]
+        [HttpDelete]
+        public ActionResult deleteairline(string Id, string Status)
+        {
+            Airline rep = new Airline();
+
+            try
+            {
+                bool Msg = rep.Deleteairline(Id, Status, _configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [Route("/api/v1.0/flight/airline/deleteflight/{Id}/{Status}")]
+        [HttpDelete]
+        public ActionResult deleteflight(string Id, string Status)
+        {
+            Airline rep = new Airline();
+
+            try
+            {
+                bool Msg = rep.Deleteflight(Id, Status, _configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [Route("/api/v1.0/flight/airline/getflight")]
+        [HttpGet]
+        public ActionResult getflight()
+        {
+            Airline rep = new Airline();
+
+            try
+            {
+                string Msg = rep.GetFlight(_configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
 
         [Route("/api/v1.0/flight/admin/login")]
         [HttpPost]
@@ -46,7 +164,14 @@ namespace AdminService.Controllers
             try
             {
                 string Msg = rep.Admin(AdminLogin, _configuration);
-                return Ok(Msg);
+                if (Msg != "No Data Found")
+                {
+                    return Ok(Msg);
+                }
+                else
+                {
+                    return Unauthorized(Msg);
+                }
             }
             catch (Exception ex)
             {

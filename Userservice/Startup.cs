@@ -30,7 +30,7 @@ namespace Userservice
             }
             //adminContext.Database.EnsureCreated();
             app.UseRouting();
-
+            app.UseCors(builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -40,7 +40,7 @@ namespace Userservice
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Admin Airline Booking API");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "User Service");
             });
         }
 
@@ -49,12 +49,14 @@ namespace Userservice
         {
             services.AddControllers();
 
+            services.AddCors();
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    Title = "Swagger Admin Airline Services API",
-                    Description = "Swagger Admin Airline Services API",
+                    Title = "Swagger User Service",
+                    Description = "Swagger User Service",
                     Version = "v1"
                 });
             });

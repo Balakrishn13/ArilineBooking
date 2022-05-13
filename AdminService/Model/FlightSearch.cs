@@ -26,7 +26,7 @@ namespace AdminService.Model
             SqlConnection con = new SqlConnection(strConnString);
             SqlCommand cmd = new SqlCommand();
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "[dbo].[SearchFlight]";
+            cmd.CommandText = "[dbo].[SearchFlightdata]";
             cmd.Parameters.Add("@SearchDate", SqlDbType.DateTime).Value = Ft.SearchDate;
             cmd.Parameters.Add("@From", SqlDbType.VarChar).Value = Ft.FromLocation;
             cmd.Parameters.Add("@To", SqlDbType.VarChar).Value = Ft.ToLocation;
@@ -36,7 +36,34 @@ namespace AdminService.Model
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(mDataSet);
-                Msg = JsonConvert.SerializeObject(mDataSet);
+
+
+                List<AirlineData> getAirlines = new List<AirlineData>();
+
+                if (mDataSet.Tables[0].Rows.Count > 0)
+                {
+                    for (int i = 0; i < mDataSet.Tables[0].Rows.Count; i++)
+                    {
+                        AirlineData ga = new AirlineData();
+                        ga.FlightID = mDataSet.Tables[0].Rows[i]["FlightID"].ToString();
+                        ga.AirlineId = mDataSet.Tables[0].Rows[i]["AirlineId"].ToString();
+                        ga.Airline_Name = mDataSet.Tables[0].Rows[i]["Airline_Name"].ToString();
+                        ga.FromLocation = mDataSet.Tables[0].Rows[i]["FromLocation"].ToString();
+                        ga.ToLocation = mDataSet.Tables[0].Rows[i]["ToLocation"].ToString();
+                        ga.Price = mDataSet.Tables[0].Rows[i]["Price"].ToString();
+                        ga.Food= mDataSet.Tables[0].Rows[i]["Food"].ToString();
+                        ga.Status = mDataSet.Tables[0].Rows[i]["Status"].ToString();
+                        ga.Sheduled = mDataSet.Tables[0].Rows[i]["Sheduled"].ToString();                        
+                        getAirlines.Add(ga);
+                    }
+
+                    Msg = JsonConvert.SerializeObject(getAirlines);
+
+                }
+                else
+                {
+                    Msg = "No Data Found";
+                }
             }
             catch (Exception ex)
             {

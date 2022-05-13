@@ -12,7 +12,7 @@ namespace AdminService.Model
     {
         public string FlightId { get; set; }
 
-        public int AirlineId { get; set; }
+        public string AirlineId { get; set; }
 
         public DateTime FromDate { get; set; }
 
@@ -26,15 +26,15 @@ namespace AdminService.Model
 
        
 
-        public int NoOfBUSeats { get; set; }
+        public string NoOfBUSeats { get; set; }
 
-        public int NoOfNONBUSeats { get; set; }
+        public string NoOfNONBUSeats { get; set; }
 
         public string Remarks { get; set; }
 
-        public int NoOfRows { get; set; }
+        public string NoOfRows { get; set; }
 
-        public decimal Price { get; set; }
+        public string Price { get; set; }
 
         public string Sheduled { get; set; }
 

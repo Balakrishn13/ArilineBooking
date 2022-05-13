@@ -25,13 +25,13 @@ namespace AdminService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-           
+            services.AddCors();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    Title = "Swagger Admin Airline Services API",
-                    Description = "Swagger Admin Airline Services API",
+                    Title = "Swagger Admin Service",
+                    Description = "Swagger Admin Service",
                     Version = "v1"
                 });
             });
@@ -48,6 +48,7 @@ namespace AdminService
             }
             //adminContext.Database.EnsureCreated();
             app.UseRouting();
+            app.UseCors(builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
 
             app.UseAuthorization();
 
@@ -58,7 +59,7 @@ namespace AdminService
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Admin Airline Booking API");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Admin Service");
             });
         }
     }

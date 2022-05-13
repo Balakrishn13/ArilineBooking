@@ -34,7 +34,19 @@ namespace AdminService.Model
                 con.Open();
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(mDataSet);
-                Msg = JsonConvert.SerializeObject(mDataSet);
+                if (mDataSet.Tables[0].Rows.Count > 0)
+                {
+                    Admin admin = new Admin();
+
+                    admin.ID = mDataSet.Tables[0].Rows[0]["ID"].ToString();
+                    admin.Name = mDataSet.Tables[0].Rows[0]["Name"].ToString();
+                    admin.Role= mDataSet.Tables[0].Rows[0]["role"].ToString();
+                    Msg = JsonConvert.SerializeObject(admin);
+                }
+                else
+                {
+                    Msg = "No Data Found";
+                }
             }
             catch (Exception ex)
             {

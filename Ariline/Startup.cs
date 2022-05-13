@@ -22,6 +22,7 @@ namespace Ariline
             //services.AddControllersWithViews();
 
             services.AddOcelot();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,7 +34,7 @@ namespace Ariline
             }
 
             app.UseRouting();
-
+            app.UseCors(builder => { builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context =>

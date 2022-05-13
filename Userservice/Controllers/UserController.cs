@@ -29,8 +29,32 @@ namespace Userservice.Controllers
             User rep = new User();
             try
             {
-                string Msg = rep.AddAirline(user, _configuration);
+                string Msg = rep.AddUser(user, _configuration);
                 return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [Route("/api/v1.0/flight/user/login")]
+        [HttpPost]
+        public ActionResult login(Login login)
+        {
+            Login rep = new Login();
+
+            try
+            {
+                string Msg = rep.Userlogin(login, _configuration);
+                if (Msg != "No Data Found")
+                {
+                    return Ok(Msg);
+                }
+                else
+                {
+                    return Unauthorized(Msg);
+                }
             }
             catch (Exception ex)
             {
@@ -73,6 +97,40 @@ namespace Userservice.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("/api/v1.0/flight/getpnr")]
+        public ActionResult GetPNR(UserPnr userPnr)
+        {
+
+            Login rep = new Login();
+            try
+            {
+                string Msg = rep.PNR(userPnr, _configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("/api/v1.0/flight/getuserdata")]
+        public ActionResult getuserdata(UserPnr userPnr)
+        {
+
+            Login rep = new Login();
+            try
+            {
+                string Msg = rep.userdata(userPnr, _configuration);
+                return Ok(Msg);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message.ToString());
+            }
+        }
+
         [HttpGet]
         [Route("/api/v1.0/flight/ticket/{PNR}")]
         public ActionResult PNRSearch(string PNR)
@@ -98,7 +156,7 @@ namespace Userservice.Controllers
             Booking rep = new Booking();
             try
             {
-                string Msg = rep.PNRDelete(PNR, _configuration);
+                bool Msg = rep.PNRDelete(PNR, _configuration);
                 return Ok(Msg);
             }
             catch (Exception ex)

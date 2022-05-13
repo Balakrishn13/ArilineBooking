@@ -20,13 +20,14 @@ namespace Userservice.Model
         public string UserName { get; set; }
 
         public string Password { get; set; }
+        public string Mobile { get; set; }
 
         public bool Status { get; set; }
 
         public DateTime Createat { get; set; }
 
 
-        public string AddAirline(User user, IConfiguration Config)
+        public string AddUser(User user, IConfiguration Config)
         {
             string Msg = string.Empty;
 
@@ -37,6 +38,7 @@ namespace Userservice.Model
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.CommandText = "[dbo].[AddUser]";
             cmd.Parameters.Add("@Name", SqlDbType.VarChar).Value = user.Name;
+            cmd.Parameters.Add("@Mobile", SqlDbType.VarChar).Value = user.Mobile;
             cmd.Parameters.Add("@Email", SqlDbType.VarChar).Value = user.Email;
             cmd.Parameters.Add("@UserName", SqlDbType.VarChar).Value = user.UserName;
             cmd.Parameters.Add("@Password", SqlDbType.VarChar).Value = user.Password;
